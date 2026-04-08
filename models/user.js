@@ -25,6 +25,22 @@ const findById = async (id) => {
     return rows[0];
 };
 
+const isAdmin = async (aadharCardNum) => {
+    const [rows] = await pool.query(
+        `SELECT name FROM users WHERE role = 'admin' and aadhar_card_number = ? LIMIT 1`,
+        [aadharCardNum]
+    );
+    if (rows.length > 0) {
+        return rows[0].name; 
+    }
+};
+
+const updatePassword = async (password, id) => {
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const [result] = await pool.query(`UPDATE users SET password = ? WHERE id = ?`, [hashedPassword, id]);
+    return result.affectedRows > 0;
+};
+
 const comparePassword = async (candidatePassword, hashedPassword) => {
     return await bcrypt.compare(candidatePassword, hashedPassword);
 };
@@ -33,4 +49,4 @@ const markVoted = async (userId) => {
     await pool.query(`UPDATE users SET is_voted = true WHERE id = ?`, [userId]);
 };
 
-export { createUser, findByAadhar, findById, comparePassword, markVoted };
+export { createUser, findByAadhar, findById, comparePassword, markVoted, isAdmin, updatePassword };

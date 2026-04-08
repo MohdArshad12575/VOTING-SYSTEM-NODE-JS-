@@ -37,4 +37,4 @@ const getVoteCount = async () => {
     return rows;
 };
 
-export default { createCandidate, getAllCandidates, findById, castVote, getVoteCount };
+export { createCandidate, getAllCandidates, findById, castVote, getVoteCount };
