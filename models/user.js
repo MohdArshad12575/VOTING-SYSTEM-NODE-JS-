@@ -44,25 +44,48 @@ const submitVote = async (userId, candidateId) => {
     const connection = await pool.getConnection();
     try {
         await connection.beginTransaction();
-        const [user] = await connection.query(
+        const [userRows] = await connection.query(
             'SELECT * FROM users WHERE id = ? AND role = "voter" AND is_voted = 0',
          [userId]);
 
-         if(user.length === 0) {
+         if(userRows.length === 0) {
             throw new Error('User is not a voter or has already voted');
-         }
+         };
 
-         const [candidate] = await connection.query(
+        const [candidateRows] = await connection.query(
+            'SELECT * FROM candidates WHERE id = ?',
+         [candidateId]);
 
-         )
+        if(candidateRows.length === 0) {
+            throw new Error('Candidate not found');
+        };
+
+        // mark user as voted
+        await connection.query(
+            'UPDATE users SET is_voted = 1 WHERE id = ?'[userId]
+        );
+
+        // insert vote record in separate table 
+         await connection.query(
+            'INSERT INTO votes (user_id, candidate_id) VALUES (?, ?)',
+            [userId, candidateId]
+        );
+        // updating vote count for candidate
+        await connection.query(
+            `UPDATE candidates SET vote_count = vote_count + 1 WHERE id = ?`,
+            [candidateId]
+        );
+
+        await connection.commit();
+        return { success: true, message: "Vote recorded successfully" };
 
     } catch (error) {
         await connection.rollback();
         throw error;
+    } finally {
+        connection.release();
     }
-
-}
-
+};
 
 const getCandidate = async () => {
     const [rows] = await pool.query(`SELECT * FROM candidates`);
