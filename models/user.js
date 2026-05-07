@@ -1,4 +1,3 @@
-import { use } from 'react';
 import pool from '../db.js';
 import bcrypt from 'bcrypt';
 
@@ -57,12 +56,12 @@ const submitVote = async (userId, candidateId) => {
          [candidateId]);
 
         if(candidateRows.length === 0) {
-            throw new Error('Candidate not found');
+            throw new Error('Candidate not exists');
         };
 
         // mark user as voted
         await connection.query(
-            'UPDATE users SET is_voted = 1 WHERE id = ?'[userId]
+            'UPDATE users SET is_voted = 1 WHERE id = ?',[userId]
         );
 
         // insert vote record in separate table 
@@ -92,6 +91,11 @@ const getCandidate = async () => {
     return rows;
 };
 
+const getCandidateVoteCount = async () => {
+    const [rows] = await pool.query(`SELECT name, vote_count FROM candidates`);
+    return rows;
+};
+
 const updatePassword = async (password, id) => {
     const hashedPassword = await bcrypt.hash(password, 10);
     const [result] = await pool.query(`UPDATE users SET password = ? WHERE id = ?`, [hashedPassword, id]);
@@ -104,4 +108,4 @@ const comparePassword = async (candidatePassword, hashedPassword) => {
 
 
 
-export { createUser, findByAadhar, findById, comparePassword, isAdmin, updatePassword , getCandidate  , submitVote};
+export { createUser, findByAadhar, findById, comparePassword, isAdmin, updatePassword , getCandidate  , getCandidateVoteCount, submitVote};

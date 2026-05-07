@@ -1,4 +1,4 @@
-import { findByAadhar, comparePassword, createUser,  findById, updatePassword, getCandidate ,isVoter, markVoted , submitVote} from '../models/user.js';
+import { findByAadhar, comparePassword, createUser,  findById, updatePassword, getCandidate  , getCandidateVoteCount,submitVote} from '../models/user.js';
 import {  generateToken } from '../middleware/authMiddleware.js';
 
 
@@ -121,6 +121,8 @@ const updateVote = async (req, res) => {
         if (!result) {
             return res.status(404).json({ error: "some error occurred" });
         }
+        console.log(req.user)
+        console.log(result)
         res.json(result);
 
     } catch (error) {
@@ -129,5 +131,16 @@ const updateVote = async (req, res) => {
 }
 
 
+const getVoteCount = async (req,res) => {
+    try {
+        const result = await getCandidateVoteCount();
+        console.log(result)
+        res.json(result);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+}
 
-export { login, signup, getProfileData, updatePass , getAllCandidates , updateVote };
+
+
+export { login, signup, getProfileData, updatePass , getAllCandidates , updateVote , getVoteCount};
