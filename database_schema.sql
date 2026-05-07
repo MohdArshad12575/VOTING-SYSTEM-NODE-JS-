@@ -1,22 +1,3 @@
--- phpMyAdmin SQL Dump
--- version 5.2.1
--- https://www.phpmyadmin.net/
---
--- Host: 127.0.0.1
--- Generation Time: May 07, 2026 at 03:43 PM
--- Server version: 10.4.32-MariaDB
--- PHP Version: 8.0.30
-
-SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
-START TRANSACTION;
-SET time_zone = "+00:00";
-
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8mb4 */;
-
 --
 -- Database: `voting_system_software`
 --
@@ -35,13 +16,6 @@ CREATE TABLE `candidates` (
   `vote_count` int(11) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Dumping data for table `candidates`
---
-
-INSERT INTO `candidates` (`id`, `name`, `party`, `age`, `vote_count`) VALUES
-(1, 'narendra modi', 'bjp', 75, 1),
-(2, 'rahul gandhi', 'congress', 60, 1);
 
 -- --------------------------------------------------------
 
@@ -62,16 +36,6 @@ CREATE TABLE `users` (
   `is_voted` tinyint(1) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Dumping data for table `users`
---
-
-INSERT INTO `users` (`id`, `name`, `age`, `email`, `mobile`, `address`, `aadhar_card_number`, `password`, `role`, `is_voted`) VALUES
-(1, 'Arshad Khan', 23, 'arshad.khan@example.com', '9876543210', 'Ghaziabad, Uttar Pradesh, India', '123456789012', '$2b$10$eHQC6Dfp9QfcVqM/cBtRW.F3eu/Z7sP4eRr/y3zzMjOU.M3p.M9/e', 'voter', 1),
-(2, 'john cena', 23, 'john@example.com', '9876523410', 'Ghaziabad, Uttar Pradesh, India', '123456789013', '$2b$10$4kro4/B8Ly7Lcl0ViiPY3urJxVoJvGkTLCNIs1obT1Cav2u/MxUfe', 'voter', 1),
-(3, 'super admin', 23, 'admin@example.com', '9876523410', 'Delhi, India', '123456789019', '$2b$10$5gpsku5g6F7dUf8fByt6JedUAetw2kqYPPV98SBbXpCcx/4pq6RH2', 'admin', 0);
-
--- --------------------------------------------------------
 
 --
 -- Table structure for table `votes`
@@ -83,17 +47,7 @@ CREATE TABLE `votes` (
   `candidate_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Dumping data for table `votes`
---
 
-INSERT INTO `votes` (`id`, `user_id`, `candidate_id`) VALUES
-(1, 1, 2),
-(2, 2, 1);
-
---
--- Indexes for dumped tables
---
 
 --
 -- Indexes for table `candidates`
@@ -151,6 +105,34 @@ ALTER TABLE `votes`
   ADD CONSTRAINT `votes_ibfk_2` FOREIGN KEY (`candidate_id`) REFERENCES `candidates` (`id`);
 COMMIT;
 
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+----------------------------------------------------
+
+
+CREATE TABLE candidates (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    party VARCHAR(255) NOT NULL,
+    age INT NOT NULL,
+    vote_count INT NOT NULL DEFAULT 0
+);
+
+CREATE TABLE votes (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    candidate_id INT NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES users(id),
+    FOREIGN KEY (candidate_id) REFERENCES candidates(id)
+);
+
+CREATE TABLE users (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    age INT NOT NULL,
+    email VARCHAR(255) NOT NULL UNIQUE,
+    mobile VARCHAR(20) NOT NULL,
+    address TEXT NOT NULL,
+    aadhar_card_number VARCHAR(12) NOT NULL UNIQUE,
+    password VARCHAR(255) NOT NULL,
+    role VARCHAR(50) NOT NULL DEFAULT 'voter',
+    is_voted BOOLEAN NOT NULL DEFAULT false
+);
