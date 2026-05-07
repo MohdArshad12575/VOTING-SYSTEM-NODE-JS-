@@ -21,9 +21,9 @@ const login = async (req, res) => {
         }
         
         const token = generateToken(payload);
-
-        console.log({ token })
-        res.json({ message: "successfully logged in" });
+        res.json({ token, 
+            user : { id: user.id, name: user.name }, 
+            message: "successfully logged in" });
 
     } catch (err) {
         res.status(500).json({ error: err.message });

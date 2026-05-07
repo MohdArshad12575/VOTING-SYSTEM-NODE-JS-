@@ -2,8 +2,8 @@ import { createCandidate , updateCandidate , deleteCandidate} from '../models/ad
 
 const addCandidate = async (req, res) => {
     const CandidateData = req.body;
-    const result = await createCandidate(CandidateData)
     try {
+        const result = await createCandidate(CandidateData)
         if (!result) {
             return res.status(404).json({ error: "candidate does not updated" });
         }
@@ -17,9 +17,8 @@ const addCandidate = async (req, res) => {
 const upCandidate = async (req, res) => {
     const CandidateData = req.body;
     const id = req.params.id;
-
-    const result = await updateCandidate(CandidateData,id)
     try {
+        const result = await updateCandidate(CandidateData,id)
         if (!result) {
             return res.status(404).json({ error: "Candidate not found or no fields to update" });
         }
@@ -33,8 +32,8 @@ const upCandidate = async (req, res) => {
 
 const delCandidate = async (req, res) => {
     const id = req.params.id;
-    const result = await deleteCandidate(id)
     try {
+        const result = await deleteCandidate(id)
         if (!result) {
             return res.status(404).json({ error: "candidate does not deleted" });
         }
