@@ -16,6 +16,7 @@ const verifyToken = (req, res, next) => {
     try {
 
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        console.log("Decoded token:", decoded);
         req.user = decoded
         console.log("token verified")
         next();
@@ -33,7 +34,7 @@ const generateToken = (userData) => {
 
 const checkIsAdmin = async (req, res, next) => {
     try {
-        const result = await isAdmin(req.body.aadharCardNum);
+        const result = await isAdmin(req.user.id);
         if (!result) {
             return res.status(401).json({ message: "unauthorized this aadhar number person is not an admin " })
         }

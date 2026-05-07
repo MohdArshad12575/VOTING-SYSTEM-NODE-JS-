@@ -1,5 +1,6 @@
-import { findByAadhar, comparePassword, createUser,  findById, updatePassword } from '../models/user.js';
+import { findByAadhar, comparePassword, createUser,  findById, updatePassword, getCandidate  , getCandidateVoteCount,submitVote} from '../models/user.js';
 import {  generateToken } from '../middleware/authMiddleware.js';
+
 
 const login = async (req, res) => {
     try {
@@ -20,9 +21,9 @@ const login = async (req, res) => {
         }
         
         const token = generateToken(payload);
-
-        console.log({ token })
-        res.json({ message: "successfully logged in" });
+        res.json({ token, 
+            user : { id: user.id, name: user.name }, 
+            message: "successfully logged in" });
 
     } catch (err) {
         res.status(500).json({ error: err.message });
@@ -97,4 +98,49 @@ const updatePass = async (req, res) => {
         res.status(500).json({ error: error.message });
     }
 }
-export { login, signup, getProfileData, updatePass };
+
+const getAllCandidates = async (req, res) => {
+    try {
+        const result = await getCandidate();
+
+        if (!result) {
+            return res.status(404).json({ error: "No candidates found" });
+        }
+        console.log(result)
+        res.json(result);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+}
+
+const updateVote = async (req, res) => {
+    try {
+        const candidate_id = req.params.candidateid;
+        const user_id = req.user.id;
+        const result = await submitVote(user_id, candidate_id);
+        if (!result) {
+            return res.status(404).json({ error: "some error occurred" });
+        }
+        console.log(req.user)
+        console.log(result)
+        res.json(result);
+
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+}
+
+
+const getVoteCount = async (req,res) => {
+    try {
+        const result = await getCandidateVoteCount();
+        console.log(result)
+        res.json(result);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+}
+
+
+
+export { login, signup, getProfileData, updatePass , getAllCandidates , updateVote , getVoteCount};

@@ -9,6 +9,44 @@ const createCandidate = async (candidateData) => {
     return result.insertId;
 };
 
+const updateCandidate = async (candidateData, id) => {
+    const updates = [];
+    const values = [];
+
+    if (candidateData.name !== undefined) {
+        updates.push("name = ?");
+        values.push(candidateData.name);
+    }
+    if (candidateData.party !== undefined) {
+        updates.push("party = ?");
+        values.push(candidateData.party);
+    }
+    if (candidateData.age !== undefined) {
+        updates.push("age = ?");
+        values.push(candidateData.age);
+    }
+
+    if (updates.length === 0) {
+        return null; 
+    }
+
+    values.push(id); 
+
+    const query = `UPDATE candidates SET ${updates.join(", ")} WHERE id = ?`;
+    const [result] = await pool.query(query, values);
+    
+    return result;
+};
+
+const deleteCandidate = async (id) => {
+    const [result] = await pool.query(
+        `DELETE FROM candidates WHERE id = ?`,
+        [id]
+    );
+    return result;
+};
+
+
 const getAllCandidates = async () => {
     const [rows] = await pool.query(`SELECT * FROM candidates`);
     return rows;
@@ -37,4 +75,4 @@ const getVoteCount = async () => {
     return rows;
 };
 
-export { createCandidate, getAllCandidates, findById, castVote, getVoteCount };
+export { createCandidate, getAllCandidates, findById, castVote, getVoteCount, updateCandidate , deleteCandidate };
