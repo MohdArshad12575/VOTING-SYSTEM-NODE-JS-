@@ -2,12 +2,12 @@ import pool from '../db.js';
 import bcrypt from 'bcrypt';
 
 const createUser = async (userData) => {
-    const { name, age, email, mobile, address, aadharCardNumber, password, role } = userData;
+    const { name, age, email, mobile, address, aadharCardNumber, password } = userData;
     const hashedPassword = await bcrypt.hash(password,10);
     const [result] = await pool.query(
-        `INSERT INTO users (name, age, email, mobile, address, aadhar_card_number, password, role)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-        [name, age, email, mobile, address, aadharCardNumber, hashedPassword, role || 'voter']
+        `INSERT INTO users (name, age, email, mobile, address, aadhar_card_number, password)
+        VALUES (?, ?, ?, ?, ?, ?, ?)`,
+        [name, age, email, mobile, address, aadharCardNumber, hashedPassword]
     );
     return result.insertId;
 };

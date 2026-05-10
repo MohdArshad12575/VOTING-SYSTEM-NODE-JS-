@@ -32,9 +32,9 @@ const login = async (req, res) => {
 
 const signup = async (req, res) => {
     try {
-        const { name, age, email, mobile, address, aadharCardNumber, password, role } = req.body;
+        const { name, age, email, mobile, address, aadharCardNumber, password } = req.body;
 
-        if (!name || !age || !email || !mobile || !address || !aadharCardNumber || !password || !role) {
+        if (!name || !age || !email || !mobile || !address || !aadharCardNumber || !password) {
             return res.status(400).json({ error: "All fields are required" });
         }
         if (age < 18) {
@@ -53,12 +53,7 @@ const signup = async (req, res) => {
         if (password.length < 6) {
             return res.status(400).json({ error: "Password must be at least 6 characters" });
         }
-        if (role === 'admin')    {
-            const adminExists = await checkAdminExists();
-            if (adminExists) {
-                return res.status(403).json({ error: "already exists admin" });
-            }
-        }
+
         const result = await createUser(req.body);
         res.status(201).json({ message: "user created successfully", id: result });
 
